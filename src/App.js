@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+
+import React, { useState } from 'react';
+import UserForm from './UserForm';
+import ThankYou from './ThankYou';
 
 function App() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleUserSubmit = async (userData) => {
+    const response = await fetch('http://localhost:5001/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    });
+
+    const data = await response.json();
+    if (data && data._id) {  // If the user was saved successfully
+      setSubmitted(true);
+    }
+  };
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        {submitted ? <ThankYou /> : <UserForm onUserSubmit={handleUserSubmit} />}
+      </div>
   );
 }
 
